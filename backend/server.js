@@ -46,11 +46,12 @@ app.get("/api/test", authMiddleware, (req, res) => {
 // ================= DATABASE =================
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("DB Connected"))
-  .catch(err => console.log("DB Error:", err));
+  .catch(err => console.error("DB Error:", err));
 
 // ================= SERVER =================
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+// 🔥 IMPORTANT: bind to 0.0.0.0 for Railway
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
 });
