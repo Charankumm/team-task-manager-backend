@@ -1,58 +1,111 @@
 import Task from "../models/Task.js";
-import Project from "../models/Project.js";
 
-// ================= CREATE TASK =================
+// ======================
+// CREATE TASK
+// ======================
 export const createTask = async (req, res) => {
   try {
-    const { title, description, dueDate, priority, assignedTo, projectId } = req.body;
-
-    if (!title || !projectId) {
-      return res.status(400).json({ message: "Title and projectId are required" });
-    }
-
-    // Check project exists
-    const project = await Project.findById(projectId);
-    if (!project) {
-      return res.status(404).json({ message: "Project not found" });
-    }
-
-    // Check assigned user is part of project
-    if (assignedTo && !project.members.includes(assignedTo)) {
-      return res.status(400).json({ message: "User is not a member of this project" });
-    }
+    const { title, description, status } = req.body;
 
     const task = await Task.create({
       title,
       description,
-      dueDate,
-      priority,
-      assignedTo,
-      projectId
+      status,
     });
 
-    res.status(201).json(task);
+    res.status(201).json({
+      message: "Task created successfully",
+      task,
+    });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
-// ================= GET TASKS =================
+// ======================
+// DASHBOARD DATA
+// ======================
+export const getDashboard = async (req, res) => {
+  try {
+    const tasks = await Task.find();
+
+    const dashboard = {
+      totalTasks: tasks.length,
+
+      status: {
+        todo: tasks.filter(
+          (t) => t.status === "todo"
+        ).length,
+
+        inProgress: tasks.filter(
+          (t) => t.status === "inProgress"
+        ).length,
+
+        done: tasks.filter(
+          (t) => t.status === "done"
+        ).length,
+      },
+    };
+
+    res.status(200).json(dashboard);
+
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// ======================
+// GET ALL TASKS
+// ======================
 export const getTasks = async (req, res) => {
   try {
-    const { projectId } = req.query;
+    const tasks = await Task.find().sort({
+      createdAt: -1,
+    });
 
-    const tasks = await Task.find({ projectId })
-      .populate("assignedTo", "name email");
-
-    res.json(tasks);
+    res.status(200).json(tasks);
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message,
+    });
   }
 };
 
-// ================= UPDATE STATUS =================
+// ======================
+// DELETE TASK
+// ======================
+export const deleteTask = async (req, res) => {
+  try {
+    await Task.findByIdAndDelete(req.params.id);
+
+    res.status(200).json({
+      message: "Task deleted successfully",
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+// ======================
+// UPDATE TASK STATUS
+// ======================
 export const updateTaskStatus = async (req, res) => {
   try {
     const { status } = req.body;
@@ -63,42 +116,13 @@ export const updateTaskStatus = async (req, res) => {
       { new: true }
     );
 
-    if (!task) {
-      return res.status(404).json({ message: "Task not found" });
-    }
-
-    res.json(task);
+    res.status(200).json(task);
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+    console.log(error);
 
-// ================= DASHBOARD =================
-export const getDashboard = async (req, res) => {
-  try {
-    const totalTasks = await Task.countDocuments();
-
-    const todo = await Task.countDocuments({ status: "To Do" });
-    const inProgress = await Task.countDocuments({ status: "In Progress" });
-    const done = await Task.countDocuments({ status: "Done" });
-
-    const overdue = await Task.countDocuments({
-      dueDate: { $lt: new Date() },
-      status: { $ne: "Done" }
+    res.status(500).json({
+      message: error.message,
     });
-
-    res.json({
-      totalTasks,
-      status: {
-        todo,
-        inProgress,
-        done
-      },
-      overdue
-    });
-
-  } catch (error) {
-    res.status(500).json({ error: error.message });
   }
 };
