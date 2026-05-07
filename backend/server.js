@@ -1,12 +1,10 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import cors from "cors";
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+require("dotenv").config();
 
-import authRoutes from "./routes/authRoutes.js";
-import taskRoutes from "./routes/taskRoutes.js";
-
-dotenv.config();
+const authRoutes = require("./routes/authRoutes");
+const taskRoutes = require("./routes/taskRoutes");
 
 const app = express();
 
@@ -20,22 +18,18 @@ app.use("/api/tasks", taskRoutes);
 
 // Test Route
 app.get("/", (req, res) => {
-  res.send("API Running...");
+  res.send("Task Manager Backend Running");
 });
 
 // MongoDB Connection
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => {
-    console.log("DB Connected");
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(() => console.log("DB Connected"))
+  .catch((err) => console.log(err));
 
-// Server
+// Port
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, "0.0.0.0", () => {
+app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
