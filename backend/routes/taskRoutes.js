@@ -10,6 +10,13 @@ const authMiddleware = require(
   "../middleware/authMiddleware"
 );
 
+// Dashboard route FIRST
+router.get(
+  "/dashboard",
+  authMiddleware,
+  taskController.getDashboardData
+);
+
 // Create Task
 router.post(
   "/",
@@ -36,13 +43,6 @@ router.delete(
   "/:id",
   authMiddleware,
   taskController.deleteTask
-);
-
-// Dashboard
-router.get(
-  "/dashboard",
-  authMiddleware,
-  taskController.getDashboardData
 );
 
 module.exports = router;
