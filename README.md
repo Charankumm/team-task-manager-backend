@@ -149,25 +149,17 @@ Dashboard displays:
 
 ---
 
-# 📸 Screenshots
-
 ## Login Page
 
 ![Login Page](./screenshots/login.png)
-
----
 
 ## Dashboard
 
 ![Dashboard](./screenshots/dashboard.png)
 
----
-
 ## Create Task Page
 
 ![Create Task](./screenshots/create-task.png)
-
----
 
 # 🌍 Deployment
 
