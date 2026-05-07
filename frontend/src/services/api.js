@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://team-task-manager-backend-production-7edd.up.railway.app/",
+  baseURL: "https://spirited-nourishment-production-f00e.up.railway.app/",
 });
 
 // Attach token automatically
