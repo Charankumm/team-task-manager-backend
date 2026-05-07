@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Backend for Team Task Manager (Auth, Projects, Tasks, Dashboard)",
   "main": "server.js",
-  "type": "module",
   "scripts": {
     "start": "node server.js"
   },
