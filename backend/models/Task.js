@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema(
   {
@@ -13,8 +13,18 @@ const taskSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["todo", "inProgress", "done"],
+      enum: [
+        "todo",
+        "inProgress",
+        "done",
+      ],
       default: "todo",
+    },
+
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
   {
@@ -22,4 +32,9 @@ const taskSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("Task", taskSchema);
+const Task = mongoose.model(
+  "Task",
+  taskSchema
+);
+
+module.exports = Task;
